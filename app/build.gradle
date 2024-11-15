@@ -7,11 +7,13 @@ def static buildTime() {
     return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
 }
 
+def appName = '电视盒子'
+
 android {
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.github.tvbox.osc.tk'
+        applicationId 'com.github.shyche.tvbox'
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -23,6 +25,8 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+//        resValue "string", "app_name", appName // 设置默认的app_name
     }
 
     packagingOptions {
@@ -33,7 +37,14 @@ android {
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
+        }
 
+        debug {
+            applicationIdSuffix '.debug'
+            manifestPlaceholders = [
+            appName: appName+"_${applicationIdSuffix}",
+                    app_debuggable: true
+            ]
         }
     }
     flavorDimensions +=[ "abi","brand" ]
