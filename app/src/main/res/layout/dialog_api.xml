@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/vs_460"
+        android:layout_height="@dimen/vs_500"
         android:layout_gravity="center"
         android:background="@drawable/shape_dialog_bg_main"
         android:orientation="horizontal"
@@ -19,6 +19,15 @@
             android:layout_gravity="center"
             android:focusable="false" />
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/vs_10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:fadeScrollbars="false"
+            android:scrollbars="vertical">
         <LinearLayout
             android:layout_width="@dimen/vs_640"
             android:layout_height="match_parent"
@@ -101,6 +110,25 @@
                                 android:src="@drawable/hm_history" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/apiDefault"
+                            android:layout_width="@dimen/vs_80"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/vs_5"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:background="@drawable/shape_setting_model_focus"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/vs_10">
+
+                            <ImageView
+                                android:layout_width="@dimen/vs_30"
+                                android:layout_height="@dimen/vs_30"
+                                android:focusable="true"
+                                android:src="@drawable/ic_pause" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -149,6 +177,25 @@
                                 android:layout_height="@dimen/vs_30"
                                 android:focusable="true"
                                 android:src="@drawable/hm_history" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/liveDefault"
+                            android:layout_width="@dimen/vs_80"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/vs_5"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:background="@drawable/shape_setting_model_focus"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/vs_10">
+
+                            <ImageView
+                                android:layout_width="@dimen/vs_30"
+                                android:layout_height="@dimen/vs_30"
+                                android:focusable="true"
+                                android:src="@drawable/ic_pause" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -200,9 +247,98 @@
                                 android:focusable="true"
                                 android:src="@drawable/hm_history" />
                         </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/EPGDefault"
+                            android:layout_width="@dimen/vs_80"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/vs_5"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:background="@drawable/shape_setting_model_focus"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/vs_10">
+
+                            <ImageView
+                                android:layout_width="@dimen/vs_30"
+                                android:layout_height="@dimen/vs_30"
+                                android:focusable="true"
+                                android:src="@drawable/ic_pause" />
+                        </LinearLayout>
 
                     </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_proxyHistory"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/vs_5"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
+                        <EditText
+                            android:id="@+id/proxyInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/input_dialog_api_input"
+                            android:hint="4. 请输入访问数据源、直播源的代理地址(某些源地址无法直接访问,如github等),未输入将不使用"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:paddingLeft="@dimen/vs_2"
+                            android:paddingTop="@dimen/vs_10"
+                            android:paddingRight="@dimen/vs_2"
+                            android:paddingBottom="@dimen/vs_10"
+                            android:shadowColor="@color/color_000000_60"
+                            android:shadowDx="0"
+                            android:shadowDy="0"
+                            android:shadowRadius="3"
+                            android:textColor="@color/color_FFFFFF"
+                            android:textColorHint="@color/color_FFFFFF_50"
+                            android:textSize="@dimen/ts_22" />
+
+                        <LinearLayout
+                            android:id="@+id/proxyHistory"
+                            android:layout_width="@dimen/vs_80"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/vs_5"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:background="@drawable/shape_setting_model_focus"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/vs_10">
+
+                            <ImageView
+                                android:layout_width="@dimen/vs_30"
+                                android:layout_height="@dimen/vs_30"
+                                android:focusable="true"
+                                android:src="@drawable/hm_history" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/proxyDefault"
+                            android:layout_width="@dimen/vs_80"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/vs_5"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:background="@drawable/shape_setting_model_focus"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/vs_10">
+
+                            <ImageView
+                                android:layout_width="@dimen/vs_30"
+                                android:layout_height="@dimen/vs_30"
+                                android:focusable="true"
+                                android:src="@drawable/ic_pause" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+<!--                    分割线-->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@android:color/darker_gray"/>
                     <LinearLayout
                         android:id="@+id/ll_proxy"
                         android:layout_width="match_parent"
@@ -231,6 +367,29 @@
                             android:textColor="@color/color_FFFFFF"
                             android:textColorHint="@color/color_FFFFFF_50"
                             android:textSize="@dimen/ts_22" />
+<!--                        <CheckBox-->
+<!--                            android:id="@+id/btnLoadConfigOnly"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="仅用于加载配置"/>-->
+                        <LinearLayout
+                            android:id="@+id/proxyDefault1"
+                            android:layout_width="@dimen/vs_80"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/vs_5"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:background="@drawable/shape_setting_model_focus"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/vs_10">
+
+                            <ImageView
+                                android:layout_width="@dimen/vs_30"
+                                android:layout_height="@dimen/vs_30"
+                                android:focusable="true"
+                                android:src="@drawable/ic_pause" />
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -274,7 +433,7 @@
             </LinearLayout>
 
         </LinearLayout>
-
+        </ScrollView>>
     </LinearLayout>
 
 </FrameLayout>

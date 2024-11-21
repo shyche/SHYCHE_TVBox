@@ -66,6 +66,7 @@
     <dimen name="vs_440">440mm</dimen>
     <dimen name="vs_460">460mm</dimen>
     <dimen name="vs_480">480mm</dimen>
+    <dimen name="vs_500">500mm</dimen>
     <dimen name="vs_530">530mm</dimen>
     <dimen name="vs_600">600mm</dimen>
     <dimen name="vs_640">640mm</dimen>
