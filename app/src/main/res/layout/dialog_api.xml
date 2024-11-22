@@ -145,7 +145,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/input_dialog_api_input"
-                            android:hint="2. 请输入直播源地址 (optional)"
+                            android:hint="2. 请输入直播源地址 (optional),不添则默认使用数据源直播(如果有)"
                             android:inputType="text"
                             android:maxLines="1"
                             android:paddingLeft="@dimen/vs_2"
@@ -402,6 +402,16 @@
                 android:layout_marginTop="@dimen/vs_10"
                 android:padding="@dimen/vs_5"
                 android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/useAPILive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/vs_5"
+                    android:layout_marginTop="@dimen/vs_5"
+                    android:textSize="@dimen/ts_22"
+                    android:text="使用数据源直播"
+                    android:checked="true"/>
 
                 <TextView
                     android:id="@+id/storagePermission"
