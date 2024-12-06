@@ -1144,7 +1144,7 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChangeSourceTimes++;
             if (currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {
                 currentLiveChangeSourceTimes = 0;
-                Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
+                Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? 1 : -1);        //换台反转时,超时自动换台也应该反转;目前是跳列表上一个台(实际应该是列表的下一个),在多个台都超时时,要点下一个会非常困难,列表太长... shyche  @2024-12-06
                 playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
                 playNextSource();
@@ -1753,6 +1753,21 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         showLoading();
+
+        //支持直播同时加载多个地址,各地址以";"分开(一次性添加多个,免得麻烦)    shyche  @2024-12-6
+        if (url.contains(";")){
+            String[] subUrls = url.split(";");
+            for (String subUrl : subUrls){
+                if (!subUrl.isEmpty())
+                    loadLiveFromUrl(subUrl,false);
+            }
+        } else {
+            loadLiveFromUrl(url,true);
+        }
+
+    }
+
+    private void loadLiveFromUrl(String url, boolean cleanOld){
         OkGo.<String>get(url).execute(new AbsCallback<String>() {
 
             @Override
@@ -1774,7 +1789,9 @@ public class LivePlayActivity extends BaseActivity {
                     finish();
                     return;
                 }
-                liveChannelGroupList.clear();
+                if (cleanOld) {
+                    liveChannelGroupList.clear();
+                }
                 liveChannelGroupList.addAll(list);
 
                 mHandler.post(new Runnable() {
