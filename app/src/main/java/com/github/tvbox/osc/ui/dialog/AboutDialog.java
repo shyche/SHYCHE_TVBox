@@ -18,7 +18,8 @@ public class AboutDialog extends BaseDialog {
         String version = DefaultConfig.getAppVersionName(context);
         TextView textView = findViewById(R.id.about);
         String text = textView.getText().toString().trim();
-        text = String.format(text,version);
+//        text = String.format(text,version);
+        text = text.replace("\n\n","\n"+version+"\n");
         textView.setText(text);
 
     }
