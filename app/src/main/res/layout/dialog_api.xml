@@ -276,12 +276,12 @@
                         android:orientation="horizontal">
 
                         <EditText
-                            android:id="@+id/proxyInput"
+                            android:id="@+id/inputConfigProxy"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/input_dialog_api_input"
-                            android:hint="4. 请输入访问数据源、直播源的代理地址(某些源地址无法直接访问,如github等),未输入将不使用"
+                            android:hint="4. 访问数据源、直播源的代理地址(无法直接访问时使用,如github等),未输入则不使用"
                             android:inputType="text"
                             android:maxLines="1"
                             android:paddingLeft="@dimen/vs_2"
@@ -297,7 +297,7 @@
                             android:textSize="@dimen/ts_22" />
 
                         <LinearLayout
-                            android:id="@+id/proxyHistory"
+                            android:id="@+id/inputConfigProxyHistory"
                             android:layout_width="@dimen/vs_80"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/vs_5"
@@ -315,7 +315,7 @@
                                 android:src="@drawable/hm_history" />
                         </LinearLayout>
                         <LinearLayout
-                            android:id="@+id/proxyDefault"
+                            android:id="@+id/inputConfigProxyDefault"
                             android:layout_width="@dimen/vs_80"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/vs_5"
@@ -334,6 +334,50 @@
                         </LinearLayout>
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/UseProxy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="代理应用于:"
+                            android:textSize="@dimen/ts_22" />
+
+                        <CheckBox
+                            android:id="@+id/APIUseProxy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:layout_marginTop="@dimen/vs_5"
+                            android:textSize="@dimen/ts_22"
+                            android:text="数据源"
+                            android:checked="false"/>
+                        <CheckBox
+                            android:id="@+id/LiveUseProxy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:layout_marginTop="@dimen/vs_5"
+                            android:textSize="@dimen/ts_22"
+                            android:text="直播"
+                            android:checked="false"/>
+                        <CheckBox
+                            android:id="@+id/EPGUseProxy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/vs_5"
+                            android:layout_marginTop="@dimen/vs_5"
+                            android:textSize="@dimen/ts_22"
+                            android:text="EPG"
+                            android:checked="false"/>
+                    </LinearLayout>
+
 <!--                    分割线-->
                     <ImageView
                         android:layout_width="match_parent"
@@ -353,7 +397,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/input_dialog_api_input"
-                            android:hint="socks代理服务器IP:端口,……，exo播放失败时通过代理播放"
+                            android:hint="5.socks代理服务器IP:端口,……，exo播放失败时通过代理播放"
                             android:inputType="text"
                             android:maxLines="1"
                             android:paddingLeft="@dimen/vs_2"
@@ -410,8 +454,10 @@
                     android:layout_marginLeft="@dimen/vs_5"
                     android:layout_marginTop="@dimen/vs_5"
                     android:textSize="@dimen/ts_22"
-                    android:text="使用数据源直播"
-                    android:checked="true"/>
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="直播使用数据源内\n置,不使用自定义源."
+                    android:checked="false"/>
 
                 <TextView
                     android:id="@+id/storagePermission"

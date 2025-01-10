@@ -17,6 +17,8 @@ public class HawkConfig {
     public static final String LIVE_HISTORY = "live_history";
     public static final String EPG_URL = "epg_url";
     public static final String EPG_HISTORY = "epg_history";
+    public static final String INPUT_CONFIG_PROXY_URL = "input_config_proxy_url"; //专用于获取配置的代理
+    public static final String INPUT_CONFIG_PROXY_HISTORY = "input_config_proxy_history";
     public static final String PROXY_SERVER = "proxy_server";
     // Settings
     public static final String DEBUG_OPEN = "debug_open";
