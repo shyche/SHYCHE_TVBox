@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.yanzhenjie.andserver'
 
 def static buildTime() {
-    return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
+    return new Date().format("yyyyMMddHHmmssSSS", TimeZone.getTimeZone("GMT+08:00"))
 }
 
 def appName = '电视盒子'
@@ -37,13 +37,17 @@ android {
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
+            manifestPlaceholders = [
+                appName: appName,
+                app_debuggable: false
+            ]
         }
 
         debug {
             applicationIdSuffix '.debug'
             manifestPlaceholders = [
-            appName: appName+"_${applicationIdSuffix}",
-                    app_debuggable: true
+                appName: appName+"_${applicationIdSuffix}",
+                app_debuggable: true
             ]
         }
     }

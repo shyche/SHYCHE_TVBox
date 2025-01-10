@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -77,10 +78,16 @@ public class PlayerHelper {
                     break;
             }
         }
+        try {
+            videoView.setPlayerFactory(playerFactory);
+            videoView.setRenderViewFactory(renderViewFactory);
+            videoView.setScreenScaleType(scale);
+        } catch (Exception e) {
+            //同时支持多个m3u源的时候,加载后面的源时,会触发该异常,暂时先这样处理
+            Log.e("PlayerHelper TAG","----------"+e.toString());
+            e.printStackTrace();
+        }
 
-        videoView.setPlayerFactory(playerFactory);
-        videoView.setRenderViewFactory(renderViewFactory);
-        videoView.setScreenScaleType(scale);
     }
 
     public static void updateCfg(VideoView videoView) {

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.JsLoader;
@@ -42,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,6 +59,7 @@ import java.util.regex.Pattern;
  */
 public class ApiConfig {
     private static ApiConfig instance;
+    private static final String TAG = ApiConfig.class.getSimpleName();
     private final LinkedHashMap<String, SourceBean> sourceBeanList;
     private SourceBean mHomeSource;
     private ParseBean mDefaultParse;
@@ -754,6 +758,40 @@ public class ApiConfig {
     }
 
     public List<LiveChannelGroup> getChannelGroupList() {
+        if (liveChannelGroupList == null || liveChannelGroupList.isEmpty()) {
+
+
+            try {
+                File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/channelGroupList.txt");
+                if (!cache.exists()){
+                    return null;
+                }
+                Log.e(TAG,"加载本地缓存");
+                Toast.makeText(App.getInstance(), HomeActivity.getRes().getString(R.string.act_live_play_network_error_load_last_saved), Toast.LENGTH_LONG).show();
+
+                BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(cache), "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+                String s = "";
+                while ((s = bReader.readLine()) != null) {
+                    sb.append(s + "\n");
+                }
+                bReader.close();
+
+                LiveChannelGroup[] array = new Gson().fromJson(sb.toString(),LiveChannelGroup[].class);
+                List<LiveChannelGroup> list = Arrays.asList(array);
+
+                if (list != null && list.size() > 0) {
+                    if (liveChannelGroupList.isEmpty()) {
+                        Log.e(TAG, "AddAll List if is Empty.");
+                        liveChannelGroupList.addAll(list);
+                    }
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return liveChannelGroupList;
     }
 

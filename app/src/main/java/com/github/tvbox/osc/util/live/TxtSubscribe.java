@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class TxtSubscribe {
 
     private static final Pattern NAME_PATTERN = Pattern.compile(".*,(.+?)$");
+    private static final Pattern TVG_NAME_PATTERN = Pattern.compile("tvg-name=\"(.*?)\"");
     private static final Pattern GROUP_PATTERN = Pattern.compile("group-title=\"(.*?)\"");
 
     public static void parse(LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap, String str) {
@@ -35,8 +36,21 @@ public class TxtSubscribe {
                 if (line.equals("")) continue;
                 if (line.startsWith("#EXTM3U")) continue;
                 if (line.startsWith("#EXTINF")) {
-                    String name = getStrByRegex(NAME_PATTERN, line);
+//                    String name = getStrByRegex(NAME_PATTERN, line);
+                    String name = getStrByRegex(TVG_NAME_PATTERN, line);    //频道名字优先用tvg-name字段,如果不存在,则使
+
+                    if (name == null || name == "未分组" || name == "未命名"){
+                        name = getStrByRegex(NAME_PATTERN, line);
+                    }
+
+                    if (name != null) {
+                        name = name.trim();     //去掉前面的空格,解决某些m3u配置文件不标准时,同一个频道显示多个的问题      shyche  @2025-01-07
+                    }
+
                     String group = getStrByRegex(GROUP_PATTERN, line);
+                    if (group != null){
+                        group = group.trim();
+                    }
                     // 此时再读取一行，就是对应的 url 链接了
                     String url = bufferedReader.readLine().trim();
                     if (linkedHashMap.containsKey(group)) {

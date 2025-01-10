@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -55,6 +56,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HawkUtils;
 import com.github.tvbox.osc.util.JavaUtil;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -71,7 +73,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,6 +103,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  */
 public class LivePlayActivity extends BaseActivity {
 
+    private static final String TAG = LivePlayActivity.class.getSimpleName();
     // Main View
     private VideoView mVideoView;
     private LiveController controller;
@@ -1721,7 +1728,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void initLiveChannelList() {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-        if (list.isEmpty()) {
+        if (list == null || list.isEmpty()) {
             Toast.makeText(App.getInstance(), getString(R.string.act_live_play_empty_channel), Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -1737,6 +1744,8 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+    private int mLiveConfigLoadFailedCount = 0;     //貌似已无意义
+    private int mRealLiveConfigUrls = 1;    //是否为多个直播源地址;
     //加载列表
     public void loadProxyLives(String url) {
         try {
@@ -1755,19 +1764,22 @@ public class LivePlayActivity extends BaseActivity {
         showLoading();
 
         //支持直播同时加载多个地址,各地址以";"分开(一次性添加多个,免得麻烦)    shyche  @2024-12-6
+        mLiveConfigLoadFailedCount = 0;
         if (url.contains(";")){
             String[] subUrls = url.split(";");
+            mRealLiveConfigUrls = subUrls.length;
             for (String subUrl : subUrls){
                 if (!subUrl.isEmpty())
-                    loadLiveFromUrl(subUrl,false);
+                    loadLiveFromUrl(subUrl);
             }
         } else {
-            loadLiveFromUrl(url,true);
+            loadLiveFromUrl(url);
         }
 
     }
 
-    private void loadLiveFromUrl(String url, boolean cleanOld){
+    private void loadLiveFromUrl(String url){
+        Log.d(TAG,"loadLiveFromUrl:"+url);
         OkGo.<String>get(url).execute(new AbsCallback<String>() {
 
             @Override
@@ -1777,22 +1789,50 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onSuccess(Response<String> response) {
+                Log.d(TAG,"loadLiveFromUrl Success:"+url );
                 JsonArray livesArray;
                 LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
                 TxtSubscribe.parse(linkedHashMap, response.body());
                 livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
 
+
+                    if (mRealLiveConfigUrls >1 && livesArray == null || livesArray.isEmpty() && !liveChannelGroupList.isEmpty()) {
+                        Log.e(TAG,"获取频道列表为空,且已有频道,直接返回");
+                        return;
+                    }
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-                if (list.isEmpty()) {
+                if (list == null || list.isEmpty()) {
                     Toast.makeText(App.getInstance(), getString(R.string.act_live_play_empty_channel), Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
-                if (cleanOld) {
+
+                if (mRealLiveConfigUrls == 1) {     //单个直播配置地址
                     liveChannelGroupList.clear();
                 }
                 liveChannelGroupList.addAll(list);
+
+                //保存本地.此处保存已解析出的频道列表为json;同时加载多个地址时,本应该所有的地址都加载完成后再保存,但是可能存在个别地址获取失败的情况,为方便处理,每获取成功一个就保存,虽然效率低,但是可靠.以后改为异步存储吧,先解决主要问题.
+                try {
+                    File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/channelGroupList.txt");
+                    if (cache.exists()) {
+                        cache.delete();
+                    }
+
+                    cache.createNewFile();
+
+                    Gson gson = new Gson();
+                    String json = gson.toJson(liveChannelGroupList);
+                    FileOutputStream fos = new FileOutputStream(cache);
+                    fos.write(json.getBytes("UTF-8"));
+                    fos.flush();
+                    fos.close();
+                    //
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 mHandler.post(new Runnable() {
                     @Override
@@ -1806,8 +1846,57 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onError(Response<String> response) {
                 super.onError(response);
-                Toast.makeText(App.getInstance(), getString(R.string.act_live_play_network_error), Toast.LENGTH_LONG).show();
-                finish();
+                Log.d(TAG,"loadLiveFromUrl Failed:"+url );
+//                if (mRealLiveConfigUrls > 1){
+//                    mLiveConfigLoadFailedCount++;
+//                    if (mLiveConfigLoadFailedCount >= mRealLiveConfigUrls){
+//                        mLiveConfigLoadFailedCount = 0;
+//                    }
+//                }
+
+
+                try {
+                    File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/channelGroupList.txt");
+                    if (!cache.exists()){
+                        if (mRealLiveConfigUrls == 1 ) { //加载单个url才退出,加载多个不用退出
+                            finish();
+                        }
+                        return;
+                    }
+
+                    //加载本地缓存
+                    Log.e(TAG,"加载本地缓存");
+                    Toast.makeText(App.getInstance(), getString(R.string.act_live_play_network_error_load_last_saved), Toast.LENGTH_LONG).show();
+                    BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(cache), "UTF-8"));
+                    StringBuilder sb = new StringBuilder();
+                    String s = "";
+                    while ((s = bReader.readLine()) != null) {
+                        sb.append(s + "\n");
+                    }
+                    bReader.close();
+
+                    LiveChannelGroup[] array = new Gson().fromJson(sb.toString(),LiveChannelGroup[].class);
+                    List<LiveChannelGroup> list = Arrays.asList(array);
+
+                    if (list != null && list.size() > 0) {
+                        if (liveChannelGroupList.isEmpty()) {
+                            Log.e(TAG, "AddAll List:" + url);
+                            liveChannelGroupList.addAll(list);
+                        }
+                        //刷新加载
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                LivePlayActivity.this.showSuccess();
+                                initLiveState();
+                            }
+                        });
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
